@@ -1,0 +1,27 @@
+replicaCount: 2
+
+image:
+  repository: diiir727/hello-docker
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: "hello-docker"
+
+deployment:
+  selectorLabels: ["hello-docker"]
+service:
+  type: NodePort
+  port: 9000
+  tergetport: 8000
+
+ingress:
+  host: arch.homework
+  path: /otusapp($|/)(.*)
+  port: 8000
+
+mongodb:  
+  mongodbUsername: alex
+  mongodbPassword: password
+  mongodbDatabase: alex
+  service:
+    name: mongo-service

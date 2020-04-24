@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: hello-deployment
+spec:
+    replicas: 3
+    selector:
+       matchLabels:
+          app: hello-docker
+    template:
+       metadata:
+          labels:
+             app: hello-docker
+       spec:
+          containers:
+          - name: hello-docker
+            image: diiir727/hello-docker:v2.1
+            ports:
+              - name: web 
+                containerPort: 8000
+            env:
+              - name: DB_USER
+                valueFrom:
+                  secretKeyRef:
+                    name: app-secret
+                    key: DB_USER
+              - name: DB_PASS
+                valueFrom:
+                  secretKeyRef:
+                    name: app-secret
+                    key: DB_PASS
+              - name: DB_NAME
+                valueFrom:
+                  secretKeyRef:
+                    name: app-secret
+                    key: DB_NAME
+              - name: HOST
+                valueFrom:
+                  configMapKeyRef:
+                    name: app-config
+                    key: DB_HOST
+              - name: GREET
+                valueFrom:
+                  configMapKeyRef:
+                    name: app-config
+                    key: GREET
+            livenessProbe:
+              httpGet:
+                port: 8000
+                path: /version
+              initialDelaySeconds: 10
+              periodSeconds: 5
+              timeoutSeconds: 2
+            readinessProbe:
+              httpGet:
+                port: 8000
+                path: /health
+              initialDelaySeconds: 10
+              periodSeconds: 5
