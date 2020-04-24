@@ -1,5 +1,5 @@
 replicaCount: 2
-
+greet: Hello from values
 image:
   repository: diiir727/hello-docker
   pullPolicy: IfNotPresent

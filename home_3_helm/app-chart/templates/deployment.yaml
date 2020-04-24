@@ -23,27 +23,27 @@ spec:
           - name: DB_USER
             valueFrom:
               secretKeyRef:
-                name: app-secret
+                name: {{ .Values.fullnameOverride }}-secret
                 key: DB_USER
           - name: DB_PASS
             valueFrom:
               secretKeyRef:
-                name: app-secret
+                name: {{ .Values.fullnameOverride }}-secret
                 key: DB_PASS
           - name: DB_NAME
             valueFrom:
               secretKeyRef:
-                name: app-secret
+                name: {{ .Values.fullnameOverride }}-secret
                 key: DB_NAME
           - name: HOST
             valueFrom:
               configMapKeyRef:
-                name: app-config
+                name: {{ .Values.fullnameOverride }}-config
                 key: DB_HOST
           - name: GREET
             valueFrom:
               configMapKeyRef:
-                name: app-config
+                name: {{ .Values.fullnameOverride }}-config
                 key: GREET
         livenessProbe:
           httpGet:
