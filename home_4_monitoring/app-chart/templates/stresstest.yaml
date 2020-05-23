@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: stresstest
+spec:
+  template:
+    spec:
+      containers:
+      - name: stresstest
+        image: diiir727/test-job:14
+        env:
+          - name: JOB_HOST
+            value: {{ .Values.ingress.host }}
+          - name: JOB_URL
+            value: "http://{{ .Values.ingress.host }}/otusapp"
+      restartPolicy: OnFailure
+  backoffLimit: 4

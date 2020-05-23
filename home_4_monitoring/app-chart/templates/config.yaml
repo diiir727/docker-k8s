@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.fullnameOverride }}-config
+data:
+  DB_HOST: {{ .Values.mongodb.service.name }}
+  GREET: {{ .Values.greet }}
