@@ -2,6 +2,8 @@
 
 ![image-20200511192923373](./README.assets/diagram.jpg)
 
+
+`helm install gateway app-chart/`
 ##### Результаты тестирования
 
 ```
