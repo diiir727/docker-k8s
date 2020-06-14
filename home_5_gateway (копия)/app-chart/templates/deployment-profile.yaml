@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.fullnameOverride }}-profile-deployment
+spec:
+  replicas: {{ .Values.authReplicaCount }}
+  selector:
+    matchLabels:
+      app: profile-app
+  template:
+    metadata:
+      labels:
+        app: profile-app
+    spec:
+      containers:
+      - name: profile-app
+        image: "{{ .Values.profileImage.repository }}:{{ .Values.profileImage.version }}"
+        imagePullPolicy: {{ .Values.profileImage.pullPolicy }}
+        ports:
+        - name: profile-web
+          containerPort: 8082
+        env:
+          - name: PROFILE_DATABASE_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.fullnameOverride }}-secret
+                key: PROFILE_DATABASE_USERNAME
+          - name: PROFILE_DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.fullnameOverride }}-secret
+                key: PROFILE_DATABASE_PASSWORD
+          - name: PROFILE_DATABASE_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.fullnameOverride }}-secret
+                key: PROFILE_DATABASE_URL
+        livenessProbe:
+          httpGet:
+            port: 8082
+            path: /live
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            port: 8082
+            path: /live
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 10

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.fullnameOverride }}-gateway-deployment
+spec:
+  replicas: {{ .Values.authReplicaCount }}
+  selector:
+    matchLabels:
+      app: gateway-app
+  template:
+    metadata:
+      labels:
+        app: gateway-app
+    spec:
+      containers:
+      - name: gateway-app
+        image: "{{ .Values.gatewayImage.repository }}:{{ .Values.gatewayImage.version }}"
+        imagePullPolicy: {{ .Values.gatewayImage.pullPolicy }}
+        ports:
+        - name: gateway-web
+          containerPort: 8083
+        env:
+          - name: GATEWAY_PROFILE_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.fullnameOverride }}-secret
+                key: GATEWAY_PROFILE_URL
+          - name: GATEWAY_AUTH_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.fullnameOverride }}-secret
+                key: GATEWAY_AUTH_URL
+        livenessProbe:
+          httpGet:
+            port: 8083
+            path: /live
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            port: 8083
+            path: /live
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 10

@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.fullnameOverride }}-{{ .Values.profile.name }}-deployment
+spec:
+  replicas: {{ .Values.authReplicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.profile.name }}-app
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.profile.name }}-app
+    spec:
+      containers:
+      - name: {{ .Values.profile.name }}-app
+        image: "{{ .Values.profile.repository }}:{{ .Values.profile.version }}"
+        imagePullPolicy: {{ .Values.profile.pullPolicy }}
+        ports:
+        - name: {{ .Values.profile.name }}-web
+          containerPort: 8082
+        env:
+          - name: PROFILE_DATABASE_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.fullnameOverride }}-secret
+                key: DATABASE_USERNAME
+          - name: PROFILE_DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.fullnameOverride }}-secret
+                key: DATABASE_PASSWORD
+          - name: PROFILE_DATABASE_URL
+            value: "jdbc:postgresql://postgres-{{ .Values.profile.name }}:5432/myapp"
+        livenessProbe:
+          httpGet:
+            port: 8082
+            path: /profiles/live
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          timeoutSeconds: 20
+        readinessProbe:
+          httpGet:
+            port: 8082
+            path: /profiles/live
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          timeoutSeconds: 20

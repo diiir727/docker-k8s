@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.fullnameOverride }}-{{ .Values.gateway.name }}-deployment
+spec:
+  replicas: {{ .Values.authReplicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.gateway.name }}-app
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.gateway.name }}-app
+    spec:
+      containers:
+      - name: {{ .Values.gateway.name }}-app
+        image: "{{ .Values.gateway.repository }}:{{ .Values.gateway.version }}"
+        imagePullPolicy: {{ .Values.gateway.pullPolicy }}
+        ports:
+        - name: {{ .Values.gateway.name }}-web
+          containerPort: 8083
+        env:
+          - name: GATEWAY_PROFILE_URL
+            value: "http://{{ .Values.profile.name }}-service"
+          - name: GATEWAY_AUTH_URL
+            value: "http://{{ .Values.auth.name }}-service"
+        livenessProbe:
+          httpGet:
+            port: 8083
+            path: /fallback
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          timeoutSeconds: 20
+        readinessProbe:
+          httpGet:
+            port: 8083
+            path: /fallback
+          initialDelaySeconds: 30
+          periodSeconds: 20
+          timeoutSeconds: 20

@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.auth.name }}-initdb
+spec:
+  template:
+    metadata:
+      name: {{ .Values.auth.name }}-initdb
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: users-install-job
+        env:
+          - name: DATABASE_URI
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.fullnameOverride }}-secret
+                key: AUTH_MIGRATION_URL
+        image: postgres:latest
+        command:
+          - sh
+          - "-c"
+          - |
+            psql $DATABASE_URI <<'EOF'
+              create table users(
+                id serial primary key,
+                login text not null,
+                pass text not null
+              );
+            EOF
+  backoffLimit: 2

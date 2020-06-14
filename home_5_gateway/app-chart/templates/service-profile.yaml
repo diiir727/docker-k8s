@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.profile.name }}-service
+  labels: 
+    app.kubernetes.io/name: {{ .Values.profile.name }}-service
+spec:
+  type: {{ .Values.profileService.type }}
+  ports:
+    - port: {{ .Values.profileService.port }}
+      targetPort: {{ .Values.profileService.tergetport }}
+      protocol: TCP
+      name: {{ .Values.profileService.name }}
+  selector:
+    app: {{ .Values.profile.name }}-app

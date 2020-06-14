@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.profile.name }}-initdb
+spec:
+  template:
+    metadata:
+      name: {{ .Values.profile.name }}-initdb
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: profiles-install-job
+        env:
+          - name: DATABASE_URI
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.fullnameOverride }}-secret
+                key: PROFILE_MIGRATION_URL
+        image: postgres:latest
+        command:
+          - sh
+          - "-c"
+          - |
+            psql $DATABASE_URI <<'EOF'
+              create table profiles(
+                id serial primary key,
+                name text not null,
+                phone numeric not null,
+                user_id integer not null unique
+              );
+            EOF
+  backoffLimit: 2

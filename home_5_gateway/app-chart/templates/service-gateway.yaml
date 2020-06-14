@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.gateway.name }}-service
+  labels: 
+    app.kubernetes.io/name: {{ .Values.gateway.name }}-service
+spec:
+  type: {{ .Values.gatewayService.type }}
+  ports:
+    - port: {{ .Values.gatewayService.port }}
+      targetPort: {{ .Values.gatewayService.tergetport }}
+      protocol: TCP
+      name: {{ .Values.gatewayService.name }}
+  selector:
+    app: {{ .Values.gateway.name }}-app

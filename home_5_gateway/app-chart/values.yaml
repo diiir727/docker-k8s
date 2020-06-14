@@ -1,0 +1,51 @@
+profileReplicaCount: 2
+authReplicaCount: 2
+gatewayReplicaCount: 2
+auth:
+  repository: diiir727/auth
+  pullPolicy: IfNotPresent
+  version: 2
+  name: auth
+profile:
+  repository: diiir727/profile
+  pullPolicy: IfNotPresent
+  version: 2
+  name: profile
+gateway:
+  repository: diiir727/gateway
+  pullPolicy: IfNotPresent
+  version: 3
+  name: gateway
+
+nameOverride: ""
+fullnameOverride: "app-gateway"
+
+deployment:
+  selectorLabels: ["app-gateway"]
+authService:
+  type: NodePort
+  port: 80
+  tergetport: 8081
+  name: auth-http
+profileService:
+  type: NodePort
+  port: 80
+  tergetport: 8082
+  name: profile-http
+gatewayService:
+  type: NodePort
+  port: 9000
+  tergetport: 8083
+  name: gateway-http
+
+ingress:
+  host: arch.homework
+  path: /otusapp($|/)(.*)
+  port: 8083
+
+psql:  
+  postgresqlUsername: "myuser"
+  postgresqlPassword: "passwd"
+  postgresqlDatabase: "myapp"
+  authMigrationUrl: postgresql://myuser:passwd@postgres-auth/myapp
+  profileMigrationUrl: postgresql://myuser:passwd@postgres-profile/myapp

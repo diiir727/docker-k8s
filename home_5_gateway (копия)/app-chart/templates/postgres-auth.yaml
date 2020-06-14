@@ -1,0 +1,56 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-auth
+  labels:
+    app: postgres-auth
+spec:
+  type: NodePort
+  ports:
+   - port: 5432
+  selector:
+    app: postgres-auth
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-statefulset
+spec:
+  serviceName: "postgres-auth"
+  replicas: 2
+  selector:
+    matchLabels:
+      app: postgres-auth
+  template:
+    metadata:
+      labels:
+        app: postgres-auth
+    spec:
+      containers:
+      - name: postgres-auth
+        image: postgres:latest
+        ports:
+        - containerPort: 5432
+          name: postgres-auth-db
+        env:
+          - name: POSTGRES_DB
+            value: auth
+          - name: POSTGRES_USER
+            value: {{ .Values.pgsqlAuth.postgresqlUsername }}
+          - name: POSTGRES_PASSWORD
+            value: {{ .Values.pgsqlAuth.postgresqlPassword }}
+        volumeMounts:
+        - name: postgres-auth-db
+          mountPath: /var/lib/postgresql-auth/data
+          subPath: postgres-auth-db
+  volumeClaimTemplates:
+  - metadata:
+      name: postgres-auth-db
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: standard
+      resources:
+        requests:
+          storage: 1Gi

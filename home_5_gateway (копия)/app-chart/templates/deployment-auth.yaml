@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.fullnameOverride }}-auth-deployment
+spec:
+  replicas: {{ .Values.authReplicaCount }}
+  selector:
+    matchLabels:
+      app: auth-app
+  template:
+    metadata:
+      labels:
+        app: auth-app
+    spec:
+      containers:
+      - name: auth-app
+        image: "{{ .Values.authImage.repository }}:{{ .Values.authImage.version }}"
+        imagePullPolicy: {{ .Values.authImage.pullPolicy }}
+        ports:
+        - name: auth-web
+          containerPort: 8081
+        env:
+          - name: AUTH_DATABASE_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.fullnameOverride }}-secret
+                key: AUTH_DATABASE_USERNAME
+          - name: AUTH_DATABASE_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.fullnameOverride }}-secret
+                key: AUTH_DATABASE_PASSWORD
+          - name: AUTH_DATABASE_URL
+            valueFrom:
+              configMapKeyRef:
+                name: {{ .Values.fullnameOverride }}-secret
+                key: AUTH_DATABASE_URL
+        livenessProbe:
+          httpGet:
+            port: 8081
+            path: /live
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            port: 8081
+            path: /live
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 10
