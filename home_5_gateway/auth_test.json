@@ -1,0 +1,545 @@
+{
+	"info": {
+		"_postman_id": "c2c0632f-0e3f-48b5-9915-98668a987bb6",
+		"name": "auth hw test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "registraition user 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b2a0ffef-735f-4231-90de-f222d2bcf3f4",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							"",
+							"pm.test(\"has location\", function() {",
+							"    pm.response.to.have.header(\"Location\");",
+							"    let headerValue = pm.response.headers.get(\"Location\")",
+							"    pm.globals.set(\"location\", headerValue);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "45be08ce-0178-411a-be9a-ef445b81a8c8",
+						"exec": [
+							"pm.globals.set(\"myReqBody\", JSON.stringify({\r",
+							"\t\"login\": pm.globals.replaceIn('{{$randomFirstName}}'),\r",
+							"\t\"pass\": pm.globals.replaceIn('{{$randomPassword}}')\r",
+							"}));\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{{myReqBody}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/auth/registration",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"auth",
+						"registration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "registraition user 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d2bc0951-8fe3-4235-9046-24464ef32f34",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "72bf18e9-09a6-41a7-8d8a-00ced3fc97a6",
+						"exec": [
+							"pm.globals.set(\"myReqBodySecond\", JSON.stringify({\r",
+							"\t\"login\": pm.globals.replaceIn('{{$randomFirstName}}'),\r",
+							"\t\"pass\": pm.globals.replaceIn('{{$randomPassword}}')\r",
+							"}));\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{{myReqBodySecond}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/auth/registration",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"auth",
+						"registration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth user1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7faeb048-90b3-47d7-9980-91eb4a7ec1bc",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.globals.set(\"firstUserAuth\", pm.response.text());",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{{myReqBody}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/auth",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "auth user2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f42f9c82-3b10-4341-a71d-93bfb8aa9422",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.globals.set(\"secondUserAuth\", pm.response.text());",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{{myReqBodySecond}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/auth",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"auth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create unauthorize",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "63ce856d-7223-4f01-92e4-86cf6cd6db15",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{$randomFullName}}\",\r\n    \"phone\": \"79453231212\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/profiles",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"profiles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create profile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "04c6b806-bab8-4a5e-ac3f-19592633ec58",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{firstUserAuth}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{$randomFullName}}\",\r\n    \"phone\": \"79453231212\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/profiles",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"profiles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get unathorize",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9ef1183f-ce42-4f8b-b95d-a213dc63c38a",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {\r",
+							"    pm.response.to.have.status(401);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/profiles/users/{{location}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"profiles",
+						"users",
+						"{{location}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get profile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6be2da31-af70-4355-92a8-f9db8799f1ab",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{firstUserAuth}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/profiles/users/{{location}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"profiles",
+						"users",
+						"{{location}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get profile wrong user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e070ca15-de3d-4602-b775-6689de4d9803",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{secondUserAuth}}"
+					}
+				],
+				"url": {
+					"raw": "{{host}}/profiles/users/{{location}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"profiles",
+						"users",
+						"{{location}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update profile",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8d135880-3094-4e3a-8f58-f4f6d3102904",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{firstUserAuth}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{$randomFullName}}\",\r\n    \"phone\": \"79453231212\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/profiles/users/{{location}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"profiles",
+						"users",
+						"{{location}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update profile unauthorize",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2ce1a8bf-bc23-4f21-8880-56ecd9aab6bb",
+						"exec": [
+							"pm.test(\"Status code is 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Bearer {{secondUserAuth}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{$randomFullName}}\",\r\n    \"phone\": \"79453231212\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/profiles/users/{{location}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"profiles",
+						"users",
+						"{{location}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "01bd64d8-39e8-432e-b789-67ef9dcd5681",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "5e8387ae-b98a-4808-900e-636a9c623f5e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "99ec08b2-987f-4537-839f-53b42dc01ece",
+			"key": "host",
+			"value": "http://arch.homework/otusapp",
+			"type": "string"
+		},
+		{
+			"id": "f638fb7d-76a3-4677-8301-3f043e395e7e",
+			"key": "authReqBody",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
