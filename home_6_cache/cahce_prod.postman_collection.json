@@ -1,0 +1,315 @@
+{
+	"info": {
+		"_postman_id": "2162fdc8-a0b3-462d-97bc-0c08ba83976d",
+		"name": "cahce",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "create product",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0d59f1ed-6db8-4319-8ae3-22777377bd0c",
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "7270695a-25c5-40ec-a426-2c794d37f6b6",
+						"exec": [
+							"pm.globals.set(\"productName1\",pm.globals.replaceIn('{{$randomFirstName}}') + pm.globals.replaceIn('{{$randomInt}}'));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\" : \"{{productName1}}\",\n\t\"price\" : 13.6\n}",
+					"options": {
+						"raw": {}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/products",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get product from db ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "30e50483-e62e-4354-9b09-80cacdd87d0b",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.above(500);",
+							"});",
+							"",
+							"pm.test(\"Your test name\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.globals.set(\"productId\", jsonData.id);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/products/find?name={{productName1}}&version=0",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"products",
+						"find"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{productName1}}"
+						},
+						{
+							"key": "version",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get product from cache",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "766cc67d-4cd6-4480-8372-1c436c5aab98",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/products/find?name={{productName1}}&version=0",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"products",
+						"find"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{productName1}}"
+						},
+						{
+							"key": "version",
+							"value": "0"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update product",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\" : \"{{productName1}}\",\n\t\"price\" : 22\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/products?id={{productId}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"products"
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{productId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get product with new version from db",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "be72ec76-4aa9-442d-b590-5b11dca70f13",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.above(500);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/products/find?name={{productName1}}&version=1",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"products",
+						"find"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{productName1}}"
+						},
+						{
+							"key": "version",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get product with new version from cache",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b575a268-15ca-4557-863f-7889781e063e",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 200ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/products/find?name={{productName1}}&version=1",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"products",
+						"find"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{productName1}}"
+						},
+						{
+							"key": "version",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "ad08da39-10a6-4451-9c07-bc999070ab8c",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "1e52a7c6-8682-40be-8720-c618af79db93",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "164b198e-fb70-472a-90d8-b49cd8189de3",
+			"key": "host",
+			"value": "http://arch.homework/otusapp"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
