@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ .Values.fullnameOverride }}-initdb
+spec:
+  template:
+    metadata:
+      name: {{ .Values.fullnameOverride }}-initdb
+    spec:
+      restartPolicy: Never
+      containers:
+      - name: productss-install-job
+        env:
+          - name: DATABASE_URI
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.fullnameOverride }}-secret
+                key: MIGRATION_URL
+        image: postgres:latest
+        command:
+          - sh
+          - "-c"
+          - |
+            psql $DATABASE_URI <<'EOF'
+              create table products(
+                id serial primary key,
+                name text,
+                cost numeric,
+                version integer
+            );
+            EOF
+  backoffLimit: 2

@@ -1,0 +1,28 @@
+replicaCount: 2
+products:
+  repository: diiir727/cache
+  pullPolicy: IfNotPresent
+  version: 5
+  name: products
+
+nameOverride: ""
+fullnameOverride: "products"
+
+deployment:
+  selectorLabels: ["products"]
+service:
+  type: NodePort
+  port: 80
+  tergetport: 8081
+  name: products-http
+
+ingress:
+  host: arch.homework
+  path: /otusapp($|/)(.*)
+  port: 8081
+
+psql:  
+  postgresqlUsername: "myuser"
+  postgresqlPassword: "passwd"
+  postgresqlDatabase: "myapp"
+  migrationUrl: postgresql://myuser:passwd@postgres-products/myapp
