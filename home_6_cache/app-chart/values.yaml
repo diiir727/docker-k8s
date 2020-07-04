@@ -2,7 +2,7 @@ replicaCount: 2
 products:
   repository: diiir727/cache
   pullPolicy: IfNotPresent
-  version: 5
+  version: 6
   name: products
 
 nameOverride: ""
@@ -26,3 +26,7 @@ psql:
   postgresqlPassword: "passwd"
   postgresqlDatabase: "myapp"
   migrationUrl: postgresql://myuser:passwd@postgres-products/myapp
+
+metrics:
+  path: "/actuator/prometheus"
+  namespace: monitoring
