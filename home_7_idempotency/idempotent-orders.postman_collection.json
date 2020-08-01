@@ -1,0 +1,188 @@
+{
+	"info": {
+		"_postman_id": "f205fb3e-9127-4826-b259-f5a6e127c13a",
+		"name": "idempotent-orders",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get all orders",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "86caef4c-fc75-40e0-b404-2c1b4ef42165",
+						"exec": [
+							"pm.test(\"size\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.globals.set(\"orders_size\", jsonData.length);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/orders?user=1",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"orders"
+					],
+					"query": [
+						{
+							"key": "user",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create first order",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "0035def6-71e3-4af2-9a90-34931a9ac6c0",
+						"exec": [
+							"pm.globals.set(\"idempotent_key\",pm.globals.replaceIn('{{$guid}}'));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"uuid\" : \"{{idempotent_key}}\",\n\t\"serviceId\": 1,\n\t\"userId\": 1,\n\t\"quantity\": 5,\n\t\"link\" : \"http://insta.com\"\n\t\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/orders/pay",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"orders",
+						"pay"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "try duplicate",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\t\"uuid\" : \"{{idempotent_key}}\",\r\n\t\"serviceId\": 1,\r\n\t\"userId\": 1,\r\n\t\"quantity\": 5,\r\n\t\"link\" : \"http://insta.com\"\r\n\t\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}/orders/pay",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"orders",
+						"pay"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "new order not created",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "adddeaaa-9948-4b1b-b6ac-0637dc0414f9",
+						"exec": [
+							"pm.test(\"create just one order\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(pm.globals.get(\"orders_size\")+1).to.eql(jsonData.length);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/orders?user=1",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"orders"
+					],
+					"query": [
+						{
+							"key": "user",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "636982e9-6633-4b19-924d-937242274301",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "72121678-25ee-4d45-8978-04f870b40d6c",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "d9d0a037-4508-4182-b322-8748b2ce9a1f",
+			"key": "host",
+			"value": "http://arch.homework/otusapp"
+		}
+	],
+	"protocolProfileBehavior": {}
+}

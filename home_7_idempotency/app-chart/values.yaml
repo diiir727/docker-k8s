@@ -1,0 +1,28 @@
+replicaCount: 2
+
+repository: diiir727/idempotency
+pullPolicy: IfNotPresent
+version: 5
+name: idempotency
+
+nameOverride: ""
+fullnameOverride: "idempotency"
+
+deployment:
+  selectorLabels: ["idempotency"]
+service:
+  type: NodePort
+  port: 9000
+  tergetport: 8080
+  name: idempotency-http
+
+ingress:
+  host: arch.homework
+  path: /otusapp($|/)(.*)
+  port: 8080
+
+psql:  
+  postgresqlUsername: "myuser"
+  postgresqlPassword: "passwd"
+  postgresqlDatabase: "myapp"
+  migrationUrl: postgresql://myuser:passwd@postgres-products/myapp
