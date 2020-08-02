@@ -2,7 +2,7 @@
 
 Идемпотентность реализована с помощью ключа идемпотентности.
 
-`helm install mycache app-chart/`
+`helm install idempotency app-chart/`
 ##### Результаты тестирования
 
 ```
